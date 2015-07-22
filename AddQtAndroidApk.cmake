@@ -110,7 +110,9 @@ include(CMakeParseArguments)
 # define a macro to create an Android APK target
 #
 # example:
-# add_qt_android_apk(my_app_apk my_app
+# add_library(my_app SHARED ...)
+# add_qt_android_apk(my_app_apk
+#     BASE_TARGET my_app
 #     NAME "My App"
 #     PACKAGE_NAME "org.mycompany.myapp"
 #     PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/my-android-sources
@@ -118,14 +120,14 @@ include(CMakeParseArguments)
 #     KEYSTORE_PASSWORD xxxx
 #     DEPENDS a_linked_target "path/to/a_linked_library.so" ...
 #     INSTALL
-#)
+# )
 #
-macro(add_qt_android_apk TARGET SOURCE_TARGET)
+macro(add_qt_android_apk TARGET)
   # parse the macro arguments
   cmake_parse_arguments(
       ARG
       "INSTALL"
-      "NAME;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD"
+      "BASE_TARGET;NAME;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD"
       "DEPENDS;KEYSTORE"
       ${ARGN}
   )
@@ -140,11 +142,11 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
   # extract the full path of the source target binary
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     get_property(
-        QT_ANDROID_APP_PATH TARGET "${SOURCE_TARGET}" PROPERTY DEBUG_LOCATION
+        QT_ANDROID_APP_PATH TARGET "${ARG_BASE_TARGET}" PROPERTY DEBUG_LOCATION
     )
   else()
     get_property(
-        QT_ANDROID_APP_PATH TARGET "${SOURCE_TARGET}" PROPERTY LOCATION
+        QT_ANDROID_APP_PATH TARGET "${ARG_BASE_TARGET}" PROPERTY LOCATION
     )
   endif()
 
@@ -152,14 +154,14 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
   if(ARG_NAME)
     set(QT_ANDROID_APP_NAME "${ARG_NAME}")
   else()
-    set(QT_ANDROID_APP_NAME "${SOURCE_TARGET}")
+    set(QT_ANDROID_APP_NAME "${ARG_BASE_TARGET}")
   endif()
 
   # define the application package name
   if(ARG_PACKAGE_NAME)
     set(QT_ANDROID_APP_PACKAGE_NAME "${ARG_PACKAGE_NAME}")
   else()
-    set(QT_ANDROID_APP_PACKAGE_NAME "org.qtproject.${SOURCE_TARGET}")
+    set(QT_ANDROID_APP_PACKAGE_NAME "org.qtproject.${ARG_BASE_TARGET}")
   endif()
 
   # define the application source package directory
@@ -168,7 +170,7 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
   else()
     # get app version
     get_property(
-        QT_ANDROID_APP_VERSION TARGET "${SOURCE_TARGET}" PROPERTY VERSION
+        QT_ANDROID_APP_VERSION TARGET "${ARG_BASE_TARGET}" PROPERTY VERSION
     )
 
     # use the major version number for code version (must be a single number)
@@ -249,7 +251,7 @@ macro(add_qt_android_apk TARGET SOURCE_TARGET)
   # to prepare the Android package
   add_custom_command(
       OUTPUT run_android_deploy_qt
-      DEPENDS "${SOURCE_TARGET}"
+      DEPENDS "${ARG_BASE_TARGET}"
       COMMAND
           # it seems that recompiled libraries are not copied
           # if we don't remove them first
