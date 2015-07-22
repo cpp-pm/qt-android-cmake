@@ -111,7 +111,8 @@ include(CMakeParseArguments)
 #
 # example:
 # add_library(my_app SHARED ...)
-# add_qt_android_apk(my_app_apk
+# add_qt_android_apk(
+#     TARGET my_app_apk
 #     BASE_TARGET my_app
 #     NAME "My App"
 #     PACKAGE_NAME "org.mycompany.myapp"
@@ -122,12 +123,12 @@ include(CMakeParseArguments)
 #     INSTALL
 # )
 #
-macro(add_qt_android_apk TARGET)
+macro(add_qt_android_apk)
   # parse the macro arguments
   cmake_parse_arguments(
       ARG
       "INSTALL"
-      "BASE_TARGET;NAME;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD"
+      "TARGET;BASE_TARGET;NAME;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD"
       "DEPENDS;KEYSTORE"
       ${ARGN}
   )
@@ -277,7 +278,7 @@ macro(add_qt_android_apk TARGET)
 
   # create the custom target that invokes ANT to create the apk
   add_custom_target(
-      ${TARGET}
+      ${ARG_TARGET}
       ALL
       COMMAND "${QT_ANDROID_ANT}" "${ANT_CONFIG}"
       DEPENDS run_android_deploy_qt
