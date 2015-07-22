@@ -123,7 +123,7 @@ include(CMakeParseArguments)
 #     INSTALL
 # )
 #
-macro(add_qt_android_apk)
+function(add_qt_android_apk)
   # parse the macro arguments
   cmake_parse_arguments(
       ARG
@@ -283,4 +283,4 @@ macro(add_qt_android_apk)
       COMMAND "${QT_ANDROID_ANT}" "${ANT_CONFIG}"
       DEPENDS run_android_deploy_qt
   )
-endmacro()
+endfunction()
