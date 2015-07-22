@@ -72,7 +72,7 @@ include(CMakeParseArguments)
 #     DEPENDS a_linked_target "path/to/a_linked_library.so" ...
 #     INSTALL
 #)
-# 
+#
 macro(add_qt_android_apk TARGET SOURCE_TARGET)
 
     # parse the macro arguments
