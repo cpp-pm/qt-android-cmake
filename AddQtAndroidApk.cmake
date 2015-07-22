@@ -1,5 +1,29 @@
+# Copyright (c) 2015, Ruslan Baratov
+# All rights reserved.
+
+# Hunterized version of https://github.com/LaurentGomila/qt-android-cmake
+# Hunter package manager: https://github.com/ruslo/hunter
+
 cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0026 OLD) # allow use of the LOCATION target property
+
+if(NOT HUNTER_ENABLED)
+  # Since it's not a project but CMake module for other projects we can't use
+  # HunterGate command ('project' is the requirement). Just check we use Hunter
+  # and add some stubs if not.
+
+  function(hunter_add_package)
+    # Do nothing
+  endfunction()
+
+  function(hunter_status_debug)
+    message(STATUS ${ARGV})
+  endfunction()
+
+  function(hunter_internal_error)
+    message(FATAL_ERROR ${ARGV})
+  endfunction()
+endif()
 
 # store the current source directory for future use
 set(QT_ANDROID_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}")
@@ -9,8 +33,7 @@ set(QT_ANDROID_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 # it has to be defined outside)
 set(JAVA_HOME "$ENV{JAVA_HOME}")
 if(NOT JAVA_HOME)
-  message(
-      FATAL_ERROR
+  hunter_internal_error(
       "The JAVA_HOME environment variable is not set. "
       "Please set it to the root directory of the JDK."
   )
@@ -18,25 +41,22 @@ endif()
 
 # make sure that the Android toolchain is used
 if(NOT ANDROID)
-  message(
-      FATAL_ERROR
+  hunter_internal_error(
       "Trying to use the CMake Android package without the Android toolchain."
   )
 endif()
 
-# find the Qt root directory
-if(NOT Qt5Core_DIR)
-  find_package(Qt5Core REQUIRED)
-endif()
+hunter_add_package(Qt)
+find_package(Qt5Core REQUIRED)
+
 get_filename_component(QT_ANDROID_QT_ROOT "${Qt5Core_DIR}/../../.." ABSOLUTE)
-message(STATUS "Found Qt for Android: ${QT_ANDROID_QT_ROOT}")
+hunter_status_debug("Found Qt for Android: ${QT_ANDROID_QT_ROOT}")
 
 # find the Android SDK
 if(NOT QT_ANDROID_SDK_ROOT)
   set(QT_ANDROID_SDK_ROOT "$ENV{ANDROID_SDK}")
   if(NOT QT_ANDROID_SDK_ROOT)
-    message(
-        FATAL_ERROR
+    hunter_internal_error(
         "Could not find the Android SDK. Please set either the ANDROID_SDK"
         " environment variable, or the QT_ANDROID_SDK_ROOT CMake variable to"
         " the root directory of the Android SDK"
@@ -47,7 +67,7 @@ endif()
 # androiddeployqt doesn't like backslashes in paths
 string(REPLACE "\\" "/" QT_ANDROID_SDK_ROOT "${QT_ANDROID_SDK_ROOT}")
 
-message(STATUS "Found Android SDK: ${QT_ANDROID_SDK_ROOT}")
+hunter_status_debug("Found Android SDK: ${QT_ANDROID_SDK_ROOT}")
 
 # find the Android NDK
 if(NOT QT_ANDROID_NDK_ROOT)
@@ -55,8 +75,7 @@ if(NOT QT_ANDROID_NDK_ROOT)
   if(NOT QT_ANDROID_NDK_ROOT)
     set(QT_ANDROID_NDK_ROOT "${ANDROID_NDK}")
     if(NOT QT_ANDROID_NDK_ROOT)
-      message(
-          FATAL_ERROR
+      hunter_internal_error(
           "Could not find the Android NDK. Please set either the ANDROID_NDK"
           " environment or CMake variable, or the QT_ANDROID_NDK_ROOT CMake"
           " variable to the root directory of the Android NDK"
@@ -68,7 +87,7 @@ endif()
 # androiddeployqt doesn't like backslashes in paths
 string(REPLACE "\\" "/" QT_ANDROID_NDK_ROOT "${QT_ANDROID_NDK_ROOT}")
 
-message(STATUS "Found Android NDK: ${QT_ANDROID_NDK_ROOT}")
+hunter_status_debug("Found Android NDK: ${QT_ANDROID_NDK_ROOT}")
 
 # find ANT
 if(NOT QT_ANDROID_ANT)
@@ -76,8 +95,7 @@ if(NOT QT_ANDROID_ANT)
   if(NOT QT_ANDROID_ANT)
     find_program(QT_ANDROID_ANT NAME ant)
     if(NOT QT_ANDROID_ANT)
-      message(
-          FATAL_ERROR
+      hunter_internal_error(
           "Could not find ANT. Please add its directory to the PATH environment"
           " variable, or set the ANT environment variable or QT_ANDROID_ANT"
           " CMake variable to its path."
@@ -85,7 +103,7 @@ if(NOT QT_ANDROID_ANT)
     endif()
   endif()
 endif()
-message(STATUS "Found ANT: ${QT_ANDROID_ANT}")
+hunter_status_debug("Found ANT: ${QT_ANDROID_ANT}")
 
 include(CMakeParseArguments)
 
