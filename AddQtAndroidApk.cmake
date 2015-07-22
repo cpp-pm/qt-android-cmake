@@ -20,8 +20,7 @@ endif()
 if(NOT ANDROID)
   message(
       FATAL_ERROR
-      "Trying to use the CMake Android package without the Android toolchain. "
-      " Please use the provided toolchain (toolchain/android.toolchain.cmake)"
+      "Trying to use the CMake Android package without the Android toolchain."
   )
 endif()
 
