@@ -115,14 +115,15 @@ if(NOT QT_ANDROID_ANT)
       execute_process(
           COMMAND ${_which_command} ant
           RESULT_VARIABLE _which_result
-          OUTPUT_VARIABLE QT_ANDROID_ANT # TODO: windows can output several paths
+          OUTPUT_VARIABLE QT_ANDROID_ANT
+              # TODO: windows can output several paths
           OUTPUT_STRIP_TRAILING_WHITESPACE
       )
       if(NOT _which_result EQUAL 0)
         hunter_internal_error(
-            "Could not find ANT. Please add its directory to the PATH environment"
-            " variable, or set the ANT environment variable or QT_ANDROID_ANT"
-            " CMake variable to its path."
+            "Could not find ANT. Please add its directory to the PATH"
+            " environment variable, or set the ANT environment variable or"
+            " QT_ANDROID_ANT CMake variable to its path."
         )
       endif()
     endif()
@@ -293,9 +294,6 @@ function(add_qt_android_apk)
     set(QT_ANDROID_APP_EXTRA_LIBS "\"android-extra-libs\": \"${EXTRA_LIBS}\",")
   endif()
 
-  # make sure that the output directory for the Android package exists
-  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}")
-
   # create the configuration file that will feed androiddeployqt
   # Used variables:
   #   * QT_ANDROID_APP_PATH
@@ -334,6 +332,10 @@ function(add_qt_android_apk)
 
   # create a custom command that will run the androiddeployqt utility
   # to prepare the Android package
+  # make sure that the output directory for the Android package exists
+  set(dst "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}")
+  file(MAKE_DIRECTORY "${dst}")
+
   add_custom_command(
       OUTPUT run_android_deploy_qt
       DEPENDS "${ARG_BASE_TARGET}"
@@ -341,15 +343,15 @@ function(add_qt_android_apk)
           # it seems that recompiled libraries are not copied
           # if we don't remove them first
           "${CMAKE_COMMAND}"
-          -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}"
+          -E remove_directory "${dst}"
       COMMAND
           "${CMAKE_COMMAND}"
-          -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}"
+          -E make_directory "${dst}"
       COMMAND
           "${CMAKE_COMMAND}"
           -E copy
           "${QT_ANDROID_APP_PATH}"
-          "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}"
+          "${dst}"
       COMMAND
           "${QT_ANDROID_QT_ROOT}/bin/androiddeployqt"
           --verbose
