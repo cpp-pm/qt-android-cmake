@@ -91,13 +91,26 @@ hunter_status_debug("Found Android NDK: ${QT_ANDROID_NDK_ROOT}")
 if(NOT QT_ANDROID_ANT)
   set(QT_ANDROID_ANT "$ENV{ANT}")
   if(NOT QT_ANDROID_ANT)
-    find_program(QT_ANDROID_ANT NAME ant)
+    find_host_program(QT_ANDROID_ANT NAME ant)
     if(NOT QT_ANDROID_ANT)
-      hunter_internal_error(
-          "Could not find ANT. Please add its directory to the PATH environment"
-          " variable, or set the ANT environment variable or QT_ANDROID_ANT"
-          " CMake variable to its path."
+      if(CMAKE_HOST_WIN32)
+        set(_which_command where)
+      else()
+        set(_which_command which)
+      endif()
+      execute_process(
+          COMMAND ${_which_command} ant
+          RESULT_VARIABLE _which_result
+          OUTPUT_VARIABLE QT_ANDROID_ANT # TODO: windows can output several paths
+          OUTPUT_STRIP_TRAILING_WHITESPACE
       )
+      if(NOT _which_result EQUAL 0)
+        hunter_internal_error(
+            "Could not find ANT. Please add its directory to the PATH environment"
+            " variable, or set the ANT environment variable or QT_ANDROID_ANT"
+            " CMake variable to its path."
+        )
+      endif()
     endif()
   endif()
 endif()
