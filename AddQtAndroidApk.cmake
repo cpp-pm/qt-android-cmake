@@ -210,7 +210,7 @@ function(add_qt_android_apk)
 
     # generate a manifest from the template
     configure_file(
-        "${QT_ANDROID_SOURCE_DIR}/AndroidManifest.xml.in"
+        "${QT_ANDROID_SOURCE_DIR}/templates/AndroidManifest.xml.in"
         "${QT_ANDROID_APP_PACKAGE_SOURCE_ROOT}/AndroidManifest.xml"
         @ONLY
     )
@@ -242,7 +242,7 @@ function(add_qt_android_apk)
 
   # create the configuration file that will feed androiddeployqt
   configure_file(
-      "${QT_ANDROID_SOURCE_DIR}/qtdeploy.json.in"
+      "${QT_ANDROID_SOURCE_DIR}/templates/qtdeploy.json.in"
       "${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json"
       @ONLY
   )
