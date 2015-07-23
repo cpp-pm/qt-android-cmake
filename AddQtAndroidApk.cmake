@@ -291,6 +291,7 @@ function(add_qt_android_apk)
           --output "${CMAKE_CURRENT_BINARY_DIR}"
           --input "${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json"
           --ant "${QT_ANDROID_ANT}"
+          --android-platform "android-${ANDROID_NATIVE_API_LEVEL}"
           ${INSTALL_OPTIONS}
           ${SIGN_OPTIONS}
   )
