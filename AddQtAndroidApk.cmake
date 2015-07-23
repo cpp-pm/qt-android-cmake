@@ -183,6 +183,14 @@ function(add_qt_android_apk)
     hunter_user_error("BASE_TARGET is mandatory")
   endif()
 
+  if(NOT TARGET "${ARG_BASE_TARGET}")
+    hunter_user_error("Is not a target: ${ARG_BASE_TARGET}")
+  endif()
+
+  if(TARGET "${ARG_TARGET}")
+    hunter_user_error("Target already exists: ${ARG_TARGET}")
+  endif()
+
   string(COMPARE EQUAL "${CMAKE_BUILD_TYPE}" "Debug" is_debug)
 
   # check the configuration
