@@ -194,6 +194,14 @@ function(add_qt_android_apk)
         "${QT_ANDROID_APP_VERSION}"
     )
 
+    string(COMPARE EQUAL "${QT_ANDROID_APP_VERSION_CODE}" "" is_empty)
+    if(is_empty)
+      hunter_user_error(
+          "Empty version not allowed. Please set VERSION property to target:"
+          "  ${ARG_BASE_TARGET}"
+      )
+    endif()
+
     # create a subdirectory for the extra package sources
     set(
         QT_ANDROID_APP_PACKAGE_SOURCE_ROOT
