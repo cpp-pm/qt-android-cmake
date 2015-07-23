@@ -238,7 +238,7 @@ function(add_qt_android_apk)
   endif()
 
   # make sure that the output directory for the Android package exists
-  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_ABI}")
+  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}")
 
   # create the configuration file that will feed androiddeployqt
   configure_file(
@@ -276,15 +276,15 @@ function(add_qt_android_apk)
           # it seems that recompiled libraries are not copied
           # if we don't remove them first
           "${CMAKE_COMMAND}"
-          -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_ABI}"
+          -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}"
       COMMAND
           "${CMAKE_COMMAND}"
-          -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_ABI}"
+          -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}"
       COMMAND
           "${CMAKE_COMMAND}"
           -E copy
           "${QT_ANDROID_APP_PATH}"
-          "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_ABI}"
+          "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}"
       COMMAND
           "${QT_ANDROID_QT_ROOT}/bin/androiddeployqt"
           --verbose
