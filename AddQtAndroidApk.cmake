@@ -260,6 +260,8 @@ function(add_qt_android_apk)
   file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}")
 
   # create the configuration file that will feed androiddeployqt
+  # Used variables:
+  #   * QT_ANDROID_APP_PATH
   configure_file(
       "${QT_ANDROID_SOURCE_DIR}/templates/qtdeploy.json.in"
       "${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json"
