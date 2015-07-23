@@ -46,6 +46,11 @@ get_filename_component(QT_ANDROID_QT_ROOT "${Qt5Core_DIR}/../../.." ABSOLUTE)
 hunter_status_debug("Found Qt for Android: ${QT_ANDROID_QT_ROOT}")
 
 # find the Android SDK
+if(HUNTER_ENABLED)
+  hunter_add_package(Android-SDK)
+  set(QT_ANDROID_SDK_ROOT "${ANDROID-SDK_ROOT}")
+endif()
+
 if(NOT QT_ANDROID_SDK_ROOT)
   set(QT_ANDROID_SDK_ROOT "$ENV{ANDROID_SDK}")
   if(NOT QT_ANDROID_SDK_ROOT)
