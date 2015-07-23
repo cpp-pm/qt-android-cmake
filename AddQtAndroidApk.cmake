@@ -29,6 +29,12 @@ if(NOT HUNTER_ENABLED)
   endfunction()
 endif()
 
+if(XCODE OR MSVC_IDE)
+  hunter_user_error(
+      "Only for single-configuration generators (like 'Unix Makefiles')"
+  )
+endif()
+
 # store the current source directory for future use
 set(QT_ANDROID_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
