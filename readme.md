@@ -43,7 +43,7 @@ Then all you have to do is to call the ```add_qt_android_apk``` macro to create 
 ```cmake
 if(ANDROID)
     include(qt-android-cmake/AddQtAndroidApk.cmake)
-    add_qt_android_apk(my_app_apk my_app)
+    add_qt_android_apk(TARGET my_app_apk BASE_TARGET my_app)
 endif()
 ```
 
@@ -88,7 +88,7 @@ The Android toolchain can be customized with environment variables and/or CMake 
 
 ## Options of the ```add_qt_android_apk``` macro
 
-The first two arguments of the macro are the name of the APK target to be created, and the target it must be based on (your executable). These are of course mandatory.
+The first two arguments of the macro are the name of the APK target (TARGET) to be created, and the target it must be based on (BASE_TARGET, your executable). These are of course mandatory.
 
 The macro also accepts optional named arguments. Any combination of these arguments is valid, so that you can customize the generated APK according to your own needs.
 
@@ -101,7 +101,9 @@ The name of the application. If not given, the name of the source target is take
 Example:
 
 ```cmake
-add_qt_android_apk(my_app_apk my_app
+add_qt_android_apk(
+    TARGET my_app_apk
+    BASE_TARGET my_app
     NAME "My App"
 )
 ```
@@ -113,7 +115,9 @@ The name of the application package. If not given, "org.qtproject.${source_targe
 Example:
 
 ```cmake
-add_qt_android_apk(my_app_apk my_app
+add_qt_android_apk(
+    TARGET my_app_apk
+    BASE_TARGET my_app
     PACKAGE_NAME "org.mycompany.myapp"
 )
 ```
@@ -127,8 +131,10 @@ If you don't provide this argument, a default manifest is generated from the ```
 Example:
 
 ```cmake
-add_qt_android_apk(my_app_apk my_app
-    PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/my-android-sources
+add_qt_android_apk(
+    TARGET my_app_apk
+    BASE_TARGET my_app
+    PACKAGE_SOURCES "${CMAKE_CURRENT_LIST_DIR}/my-android-sources"
 )
 ```
 
@@ -139,8 +145,10 @@ The path to a keystore file and an alias, for signing the APK. If not provided, 
 Example:
 
 ```cmake
-add_qt_android_apk(my_app_apk my_app
-    KEYSTORE ${CMAKE_CURRENT_LIST_DIR}/mykey.keystore myalias
+add_qt_android_apk(
+    TARGET my_app_apk
+    BASE_TARGET my_app
+    KEYSTORE "${CMAKE_CURRENT_LIST_DIR}/mykey.keystore" myalias
 )
 ```
 
@@ -151,8 +159,10 @@ The password associated to the gicen keystore. Note that this option is only con
 Example:
 
 ```cmake
-add_qt_android_apk(my_app_apk my_app
-    KEYSTORE ${CMAKE_CURRENT_LIST_DIR}/mykey.keystore myalias
+add_qt_android_apk(
+    TARGET my_app_apk
+    BASE_TARGET my_app
+    KEYSTORE "${CMAKE_CURRENT_LIST_DIR}/mykey.keystore" myalias
     KEYSTORE_PASSWORD xxxxx
 )
 ```
@@ -164,7 +174,9 @@ A list of dependencies (libraries) to be included into the APK. All the dependen
 Example:
 
 ```cmake
-add_qt_android_apk(my_app_apk my_app
+add_qt_android_apk(
+    TARGET my_app_apk
+    BASE_TARGET my_app
     DEPENDS a_linked_target "path/to/a_linked_library.so" etc.
 )
 ```
@@ -176,7 +188,9 @@ If this option is given, the created APK will be deployed to a connected Android
 Example:
 
 ```cmake
-add_qt_android_apk(my_app_apk my_app
+add_qt_android_apk(
+    TARGET my_app_apk
+    BASE_TARGET my_app
     INSTALL
 )
 ```
