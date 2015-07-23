@@ -163,15 +163,17 @@ function(add_qt_android_apk)
     hunter_user_error("Unparsed arguments: ${ARG_UNPARSED_ARGUMENTS}")
   endif()
 
+  string(COMPARE EQUAL "${CMAKE_BUILD_TYPE}" "Debug" is_debug)
+
   # check the configuration
-  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if(is_debug)
     set(ANT_CONFIG debug)
   else()
     set(ANT_CONFIG release)
   endif()
 
   # extract the full path of the source target binary
-  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if(is_debug)
     get_property(
         QT_ANDROID_APP_PATH TARGET "${ARG_BASE_TARGET}" PROPERTY DEBUG_LOCATION
     )
@@ -240,7 +242,7 @@ function(add_qt_android_apk)
     foreach(LIB ${ARG_DEPENDS})
       if(TARGET "${LIB}")
         # item is a CMake target, extract the library path
-        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        if(is_debug)
           get_property(LIB_PATH TARGET "${LIB}" PROPERTY DEBUG_LOCATION)
         else()
           get_property(LIB_PATH TARGET "${LIB}" PROPERTY LOCATION)
