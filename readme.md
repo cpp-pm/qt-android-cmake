@@ -1,5 +1,9 @@
 # Qt Android CMake utility
 
+## Patches note
+
+This is a [Hunterized](https://github.com/hunter-packages/qt-android-cmake) version of [original](https://github.com/LaurentGomila/qt-android-cmake) modules.
+
 ## What it is
 
 When using Qt for Android development, QMake & QtCreator is the only sane option for compiling and deploying. But if you prefer CMake, you're stuck and have no choice but writing .pro files that duplicate the functionality of your CMake files.
