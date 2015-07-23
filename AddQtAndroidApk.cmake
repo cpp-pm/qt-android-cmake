@@ -23,6 +23,10 @@ if(NOT HUNTER_ENABLED)
   function(hunter_internal_error)
     message(FATAL_ERROR ${ARGV})
   endfunction()
+
+  function(hunter_user_error)
+    message(FATAL_ERROR ${ARGV})
+  endfunction()
 endif()
 
 # store the current source directory for future use
