@@ -152,6 +152,11 @@ function(add_qt_android_apk)
       ${ARGN}
   )
 
+  string(COMPARE NOTEQUAL "${ARG_UNPARSED_ARGUMENTS}" "" has_unparsed)
+  if(has_unparsed)
+    hunter_user_error("Unparsed arguments: ${ARG_UNPARSED_ARGUMENTS}")
+  endif()
+
   # check the configuration
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(ANT_CONFIG debug)
