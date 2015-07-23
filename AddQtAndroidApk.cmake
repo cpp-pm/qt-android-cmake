@@ -67,6 +67,14 @@ string(REPLACE "\\" "/" QT_ANDROID_SDK_ROOT "${QT_ANDROID_SDK_ROOT}")
 
 hunter_status_debug("Found Android SDK: ${QT_ANDROID_SDK_ROOT}")
 
+string(COMPARE EQUAL "${ANDROID_NDK}" "" _is_empty)
+if(HUNTER_ENABLED)
+  if(_is_empty)
+    hunter_internal_error("ANDROID_NDK is not set")
+  endif()
+  set(QT_ANDROID_NDK_ROOT "${ANDROID_NDK}")
+endif()
+
 # find the Android NDK
 if(NOT QT_ANDROID_NDK_ROOT)
   set(QT_ANDROID_NDK_ROOT "$ENV{ANDROID_NDK}")
