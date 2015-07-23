@@ -212,21 +212,24 @@ function(add_qt_android_apk)
   endif()
 
   # define the application name
-  if(ARG_NAME)
+  string(COMPARE NOTEQUAL "${ARG_NAME}" "" has_name)
+  if(has_name)
     set(QT_ANDROID_APP_NAME "${ARG_NAME}")
   else()
     set(QT_ANDROID_APP_NAME "${ARG_BASE_TARGET}")
   endif()
 
   # define the application package name
-  if(ARG_PACKAGE_NAME)
+  string(COMPARE NOTEQUAL "${ARG_PACKAGE_NAME}" "" has_package_name)
+  if(has_package_name)
     set(QT_ANDROID_APP_PACKAGE_NAME "${ARG_PACKAGE_NAME}")
   else()
     set(QT_ANDROID_APP_PACKAGE_NAME "org.qtproject.${ARG_BASE_TARGET}")
   endif()
 
   # define the application source package directory
-  if(ARG_PACKAGE_SOURCES)
+  string(COMPARE NOTEQUAL "${ARG_PACKAGE_SOURCES}" "" has_package_sources)
+  if(has_package_sources)
     set(QT_ANDROID_APP_PACKAGE_SOURCE_ROOT "${ARG_PACKAGE_SOURCES}")
   else()
     # get app version
@@ -266,23 +269,27 @@ function(add_qt_android_apk)
   endif()
 
   # set the list of dependant libraries
-  if(ARG_DEPENDS)
-    foreach(LIB ${ARG_DEPENDS})
-      if(TARGET "${LIB}")
-        # item is a CMake target, extract the library path
-        if(is_debug)
-          get_property(LIB_PATH TARGET "${LIB}" PROPERTY DEBUG_LOCATION)
-        else()
-          get_property(LIB_PATH TARGET "${LIB}" PROPERTY LOCATION)
-        endif()
-        set(LIB "${LIB_PATH}")
-      endif()
-      if(EXTRA_LIBS)
-        set(EXTRA_LIBS "${EXTRA_LIBS},${LIB}")
+  set(EXTRA_LIBS "")
+  foreach(LIB ${ARG_DEPENDS})
+    if(TARGET "${LIB}")
+      # item is a CMake target, extract the library path
+      if(is_debug)
+        get_property(LIB_PATH TARGET "${LIB}" PROPERTY DEBUG_LOCATION)
       else()
-        set(EXTRA_LIBS "${LIB}")
+        get_property(LIB_PATH TARGET "${LIB}" PROPERTY LOCATION)
       endif()
-    endforeach()
+      set(LIB "${LIB_PATH}")
+    endif()
+    string(COMPARE NOTEQUAL "${EXTRA_LIBS}" "" has_extra_libs)
+    if(has_extra_libs)
+      set(EXTRA_LIBS "${EXTRA_LIBS},${LIB}")
+    else()
+      set(EXTRA_LIBS "${LIB}")
+    endif()
+  endforeach()
+
+  string(COMPARE NOTEQUAL "${EXTRA_LIBS}" "" has_extra_libs)
+  if(has_extra_libs)
     set(QT_ANDROID_APP_EXTRA_LIBS "\"android-extra-libs\": \"${EXTRA_LIBS}\",")
   endif()
 
@@ -292,6 +299,7 @@ function(add_qt_android_apk)
   # create the configuration file that will feed androiddeployqt
   # Used variables:
   #   * QT_ANDROID_APP_PATH
+  #   * QT_ANDROID_APP_EXTRA_LIBS
   configure_file(
       "${QT_ANDROID_SOURCE_DIR}/templates/qtdeploy.json.in"
       "${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json"
@@ -299,7 +307,11 @@ function(add_qt_android_apk)
   )
 
   # check if the apk must be signed
-  if(ARG_KEYSTORE)
+  string(COMPARE NOTEQUAL "${ARG_KEYSTORE}" "" has_keystore)
+  string(COMPARE NOTEQUAL "${ARG_KEYSTORE_PASSWORD}" "" has_keystore_password)
+  set(SIGN_OPTIONS "")
+
+  if(has_keystore)
     set(
         SIGN_OPTIONS
         --release
@@ -308,14 +320,16 @@ function(add_qt_android_apk)
         --tsa
         "http://timestamp.digicert.com"
     )
-    if(ARG_KEYSTORE_PASSWORD)
-      set(SIGN_OPTIONS ${SIGN_OPTIONS} --storepass "${ARG_KEYSTORE_PASSWORD}")
+    if(has_keystore_password)
+      list(APPEND SIGN_OPTIONS "--storepass" "${ARG_KEYSTORE_PASSWORD}")
     endif()
   endif()
 
   # check if the apok must be installed to the device
   if(ARG_INSTALL)
     set(INSTALL_OPTIONS --install)
+  else()
+    set(INSTALL_OPTIONS "")
   endif()
 
   # create a custom command that will run the androiddeployqt utility
