@@ -157,10 +157,30 @@ function(add_qt_android_apk)
       "DEPENDS;KEYSTORE"
       ${ARGN}
   )
+  # ->
+  #   * ARG_INSTALL
+  #   * ARG_TARGET
+  #   * ARG_BASE_TARGET
+  #   * ARG_NAME
+  #   * ARG_PACKAGE_NAME
+  #   * ARG_PACKAGE_SOURCES
+  #   * ARG_KEYSTORE_PASSWORD
+  #   * ARG_DEPENDS
+  #   * ARG_KEYSTORE
 
   string(COMPARE NOTEQUAL "${ARG_UNPARSED_ARGUMENTS}" "" has_unparsed)
   if(has_unparsed)
     hunter_user_error("Unparsed arguments: ${ARG_UNPARSED_ARGUMENTS}")
+  endif()
+
+  string(COMPARE EQUAL "${ARG_TARGET}" "" is_empty)
+  if(is_empty)
+    hunter_user_error("TARGET is mandatory")
+  endif()
+
+  string(COMPARE EQUAL "${ARG_BASE_TARGET}" "" is_empty)
+  if(is_empty)
+    hunter_user_error("BASE_TARGET is mandatory")
   endif()
 
   string(COMPARE EQUAL "${CMAKE_BUILD_TYPE}" "Debug" is_debug)
