@@ -45,7 +45,7 @@ if(NOT ANDROID)
   )
 endif()
 
-hunter_add_package(Qt)
+hunter_add_package(Qt COMPONENTS qttools) # androiddeployqt
 find_package(Qt5Core REQUIRED)
 
 get_filename_component(QT_ANDROID_QT_ROOT "${Qt5Core_DIR}/../../.." ABSOLUTE)
