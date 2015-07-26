@@ -54,7 +54,7 @@ hunter_status_debug("Found Qt for Android: ${QT_ANDROID_QT_ROOT}")
 # find the Android SDK
 if(HUNTER_ENABLED)
   hunter_add_package(Android-SDK)
-  set(QT_ANDROID_SDK_ROOT "${ANDROID-SDK_ROOT}")
+  set(QT_ANDROID_SDK_ROOT "${ANDROID-SDK_ROOT}/android-sdk")
 endif()
 
 if(NOT QT_ANDROID_SDK_ROOT)
