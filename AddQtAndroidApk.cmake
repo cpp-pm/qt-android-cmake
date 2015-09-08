@@ -145,6 +145,7 @@ include(CMakeParseArguments)
 #     PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/my-android-sources
 #     KEYSTORE ${CMAKE_CURRENT_LIST_DIR}/mykey.keystore myalias
 #     KEYSTORE_PASSWORD xxxx
+#     MANIFEST "/path/to/AndroidManifest.xml.in"
 #     DEPENDS a_linked_target "path/to/a_linked_library.so" ...
 #     INSTALL
 # )
@@ -154,7 +155,7 @@ function(add_qt_android_apk)
   cmake_parse_arguments(
       ARG
       "INSTALL"
-      "TARGET;BASE_TARGET;NAME;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD"
+      "TARGET;BASE_TARGET;NAME;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD;MANIFEST"
       "DEPENDS;KEYSTORE"
       ${ARGN}
   )
@@ -166,6 +167,7 @@ function(add_qt_android_apk)
   #   * ARG_PACKAGE_NAME
   #   * ARG_PACKAGE_SOURCES
   #   * ARG_KEYSTORE_PASSWORD
+  #   * ARG_MANIFEST
   #   * ARG_DEPENDS
   #   * ARG_KEYSTORE
 
@@ -261,9 +263,23 @@ function(add_qt_android_apk)
         "${CMAKE_CURRENT_BINARY_DIR}/package"
     )
 
+    string(COMPARE EQUAL "${ARG_MANIFEST}" "" is_empty)
+    if(is_empty)
+      set(
+          manifest_source
+          "${QT_ANDROID_SOURCE_DIR}/templates/AndroidManifest.xml.in"
+      )
+    else()
+      set(manifest_source "${ARG_MANIFEST}")
+    endif()
+
+    if(NOT EXISTS "${manifest_source}")
+      hunter_user_error("File not exists: ${manifest_source}")
+    endif()
+
     # generate a manifest from the template
     configure_file(
-        "${QT_ANDROID_SOURCE_DIR}/templates/AndroidManifest.xml.in"
+        "${manifest_source}"
         "${QT_ANDROID_APP_PACKAGE_SOURCE_ROOT}/AndroidManifest.xml"
         @ONLY
     )
