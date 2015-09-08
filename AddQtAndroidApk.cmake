@@ -151,6 +151,15 @@ include(CMakeParseArguments)
 # )
 #
 function(add_qt_android_apk)
+  if(NOT ANDROID)
+    hunter_user_error("ANDROID is empty")
+  endif()
+
+  string(COMPARE EQUAL "${ANDROID_NATIVE_API_LEVEL}" "" is_empty)
+  if(is_empty)
+    hunter_user_error("ANDROID_NATIVE_API_LEVEL is empty")
+  endif()
+
   # parse the macro arguments
   cmake_parse_arguments(
       ARG
@@ -278,6 +287,8 @@ function(add_qt_android_apk)
     endif()
 
     # generate a manifest from the template
+    # Use:
+    #   ANDROID_NATIVE_API_LEVEL
     configure_file(
         "${manifest_source}"
         "${QT_ANDROID_APP_PACKAGE_SOURCE_ROOT}/AndroidManifest.xml"
