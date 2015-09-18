@@ -140,6 +140,7 @@ include(CMakeParseArguments)
 # add_qt_android_apk(
 #     TARGET my_app_apk
 #     BASE_TARGET my_app
+#     LAUNCH_TARGET launch_my_app
 #     NAME "My App"
 #     PACKAGE_NAME "org.mycompany.myapp"
 #     PACKAGE_SOURCES ${CMAKE_CURRENT_LIST_DIR}/my-android-sources
@@ -164,7 +165,7 @@ function(add_qt_android_apk)
   cmake_parse_arguments(
       ARG
       "INSTALL"
-      "TARGET;BASE_TARGET;NAME;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD;MANIFEST"
+      "TARGET;BASE_TARGET;LAUNCH_TARGET;NAME;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD;MANIFEST"
       "DEPENDS;KEYSTORE"
       ${ARGN}
   )
@@ -172,6 +173,7 @@ function(add_qt_android_apk)
   #   * ARG_INSTALL
   #   * ARG_TARGET
   #   * ARG_BASE_TARGET
+  #   * ARG_LAUNCH_TARGET
   #   * ARG_NAME
   #   * ARG_PACKAGE_NAME
   #   * ARG_PACKAGE_SOURCES
@@ -289,6 +291,8 @@ function(add_qt_android_apk)
     # generate a manifest from the template
     # Use:
     #   ANDROID_NATIVE_API_LEVEL
+    #   QT_ANDROID_APP_NAME
+    #   QT_ANDROID_APP_PACKAGE_NAME
     configure_file(
         "${manifest_source}"
         "${QT_ANDROID_APP_PACKAGE_SOURCE_ROOT}/AndroidManifest.xml"
@@ -363,8 +367,9 @@ function(add_qt_android_apk)
   set(dst "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}")
   file(MAKE_DIRECTORY "${dst}")
 
+  set(dummy_output_apk "run_android_deploy_qt_${ARG_BASE_TARGET}")
   add_custom_command(
-      OUTPUT run_android_deploy_qt
+      OUTPUT ${dummy_output_apk}
       DEPENDS "${ARG_BASE_TARGET}"
       COMMAND
           # it seems that recompiled libraries are not copied
@@ -388,6 +393,7 @@ function(add_qt_android_apk)
           --android-platform "android-${ANDROID_NATIVE_API_LEVEL}"
           ${INSTALL_OPTIONS}
           ${SIGN_OPTIONS}
+      COMMENT "Creating APK (target: ${ARG_TARGET} base: ${ARG_BASE_TARGET})"
   )
 
   # create the custom target that invokes ANT to create the apk
@@ -395,6 +401,54 @@ function(add_qt_android_apk)
       ${ARG_TARGET}
       ALL
       COMMAND "${QT_ANDROID_ANT}" "${ANT_CONFIG}"
-      DEPENDS run_android_deploy_qt
+      DEPENDS ${dummy_output_apk}
   )
+
+  string(COMPARE NOTEQUAL "${ARG_LAUNCH_TARGET}" "" has_launch)
+  if(has_launch)
+    set(dummy_output_launch "run_android_launch_qt_${ARG_BASE_TARGET}")
+    add_custom_command(
+        OUTPUT ${dummy_output_launch}
+        DEPENDS "${ARG_BASE_TARGET}"
+        COMMAND
+            # it seems that recompiled libraries are not copied
+            # if we don't remove them first
+            "${CMAKE_COMMAND}"
+            -E remove_directory "${dst}"
+        COMMAND
+            "${CMAKE_COMMAND}"
+            -E make_directory "${dst}"
+        COMMAND
+            "${CMAKE_COMMAND}"
+            -E copy
+            "${QT_ANDROID_APP_PATH}"
+            "${dst}"
+        COMMAND
+            "${QT_ANDROID_QT_ROOT}/bin/androiddeployqt"
+            --verbose
+            --output "${CMAKE_CURRENT_BINARY_DIR}"
+            --input "${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json"
+            --ant "${QT_ANDROID_ANT}"
+            --android-platform "android-${ANDROID_NATIVE_API_LEVEL}"
+            --install
+            ${SIGN_OPTIONS}
+        COMMENT "Launching APK (target: ${ARG_TARGET} base: ${ARG_BASE_TARGET})"
+    )
+
+    # create the custom target that invokes ANT to launch the apk
+    set(adb "${ANDROID-SDK_ROOT}/android-sdk/platform-tools/adb")
+    set(activity "org.qtproject.qt5.android.bindings.QtActivity")
+    add_custom_target(
+        ${ARG_LAUNCH_TARGET}
+        COMMAND "${QT_ANDROID_ANT}" "${ANT_CONFIG}"
+        COMMAND
+            "${adb}"
+            shell
+            am
+            start
+            -S
+            -n "${QT_ANDROID_APP_PACKAGE_NAME}/${activity}"
+        DEPENDS ${dummy_output_launch}
+    )
+  endif()
 endfunction()
