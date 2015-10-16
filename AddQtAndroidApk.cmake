@@ -148,6 +148,7 @@ include(CMakeParseArguments)
 #     KEYSTORE_PASSWORD xxxx
 #     MANIFEST "/path/to/AndroidManifest.xml.in"
 #     DEPENDS a_linked_target "path/to/a_linked_library.so" ...
+#     QML_ROOT "/path/to/directory/with/qml/files"
 #     INSTALL
 # )
 #
@@ -165,7 +166,7 @@ function(add_qt_android_apk)
   cmake_parse_arguments(
       ARG
       "INSTALL"
-      "TARGET;BASE_TARGET;LAUNCH_TARGET;NAME;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD;MANIFEST"
+      "TARGET;BASE_TARGET;LAUNCH_TARGET;NAME;PACKAGE_NAME;PACKAGE_SOURCES;KEYSTORE_PASSWORD;MANIFEST;QML_ROOT"
       "DEPENDS;KEYSTORE"
       ${ARGN}
   )
@@ -179,6 +180,7 @@ function(add_qt_android_apk)
   #   * ARG_PACKAGE_SOURCES
   #   * ARG_KEYSTORE_PASSWORD
   #   * ARG_MANIFEST
+  #   * ARG_QML_ROOT
   #   * ARG_DEPENDS
   #   * ARG_KEYSTORE
 
@@ -323,6 +325,17 @@ function(add_qt_android_apk)
   string(COMPARE NOTEQUAL "${EXTRA_LIBS}" "" has_extra_libs)
   if(has_extra_libs)
     set(QT_ANDROID_APP_EXTRA_LIBS "\"android-extra-libs\": \"${EXTRA_LIBS}\",")
+  endif()
+
+  string(COMPARE NOTEQUAL "${ARG_QML_ROOT}" "" has_qml_root)
+  if(has_qml_root)
+    if(NOT EXISTS "${ARG_QML_ROOT}")
+      hunter_user_error("Directory not exists (QML_ROOT): ${ARG_QML_ROOT}")
+    endif()
+    if(NOT IS_DIRECTORY "${ARG_QML_ROOT}")
+      hunter_user_error("Is not a directory (QML_ROOT): ${ARG_QML_ROOT}")
+    endif()
+    set(QT_QML_ROOT "\"qml-root-path\": \"${ARG_QML_ROOT}\",")
   endif()
 
   # create the configuration file that will feed androiddeployqt
