@@ -299,6 +299,8 @@ function(add_qt_android_apk)
     #   CMAKE_SYSTEM_VERSION
     #   QT_ANDROID_APP_NAME
     #   QT_ANDROID_APP_PACKAGE_NAME
+    #   QT_ANDROID_APP_VERSION
+    #   QT_ANDROID_APP_VERSION_CODE
     configure_file(
         "${manifest_source}"
         "${QT_ANDROID_APP_PACKAGE_SOURCE_ROOT}/AndroidManifest.xml"
@@ -342,10 +344,41 @@ function(add_qt_android_apk)
     set(QT_QML_ROOT "\"qml-root-path\": \"${ARG_QML_ROOT}\",")
   endif()
 
+  string(COMPARE EQUAL "${ANDROID_TOOLCHAIN_MACHINE_NAME}" "" is_empty)
+  if(is_empty)
+    message(FATAL_ERROR "ANDROID_TOOLCHAIN_MACHINE_NAME is empty")
+  endif()
+
+  string(COMPARE EQUAL "${ANDROID_COMPILER_VERSION}" "" is_empty)
+  if(is_empty)
+    message(FATAL_ERROR "ANDROID_COMPILER_VERSION is empty")
+  endif()
+
+  string(COMPARE EQUAL "${ANDROID_NDK_ABI_NAME}" "" is_empty)
+  if(is_empty)
+    message(FATAL_ERROR "ANDROID_NDK_ABI_NAME is empty")
+  endif()
+
+  string(COMPARE EQUAL "${ANDROID_NDK_HOST_SYSTEM_NAME}" "" is_empty)
+  if(is_empty)
+    message(FATAL_ERROR "ANDROID_NDK_HOST_SYSTEM_NAME is empty")
+  endif()
+
   # create the configuration file that will feed androiddeployqt
   # Used variables:
-  #   * QT_ANDROID_APP_PATH
+  #   * ANDROID_COMPILER_VERSION
+  #   * ANDROID_NDK_ABI_NAME
+  #   * ANDROID_NDK_HOST_SYSTEM_NAME
+  #   * ANDROID_TOOLCHAIN_MACHINE_NAME
   #   * QT_ANDROID_APP_EXTRA_LIBS
+  #   * QT_ANDROID_APP_NAME
+  #   * QT_ANDROID_APP_PACKAGE_NAME
+  #   * QT_ANDROID_APP_PACKAGE_SOURCE_ROOT
+  #   * QT_ANDROID_APP_PATH
+  #   * QT_ANDROID_NDK_ROOT
+  #   * QT_ANDROID_QT_ROOT
+  #   * QT_ANDROID_SDK_ROOT
+  #   * QT_QML_ROOT
   configure_file(
       "${QT_ANDROID_SOURCE_DIR}/templates/qtdeploy.json.in"
       "${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json"
