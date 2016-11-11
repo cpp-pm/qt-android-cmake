@@ -7,7 +7,7 @@
  "tool-prefix": "@ANDROID_TOOLCHAIN_MACHINE_NAME@",
  "toolchain-version": "@ANDROID_COMPILER_VERSION@",
  "ndk-host": "@ANDROID_NDK_HOST_SYSTEM_NAME@",
- "target-architecture": "@ANDROID_NDK_ABI_NAME@",
+ "target-architecture": "@CMAKE_ANDROID_ARCH_ABI@",
  "application-binary": "@QT_ANDROID_APP_PATH@",
  "android-package": "@QT_ANDROID_APP_PACKAGE_NAME@",
  "android-app-name": "@QT_ANDROID_APP_NAME@",

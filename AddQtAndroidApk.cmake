@@ -354,9 +354,9 @@ function(add_qt_android_apk)
     message(FATAL_ERROR "ANDROID_COMPILER_VERSION is empty")
   endif()
 
-  string(COMPARE EQUAL "${ANDROID_NDK_ABI_NAME}" "" is_empty)
+  string(COMPARE EQUAL "${CMAKE_ANDROID_ARCH_ABI}" "" is_empty)
   if(is_empty)
-    message(FATAL_ERROR "ANDROID_NDK_ABI_NAME is empty")
+    message(FATAL_ERROR "CMAKE_ANDROID_ARCH_ABI is empty")
   endif()
 
   string(COMPARE EQUAL "${ANDROID_NDK_HOST_SYSTEM_NAME}" "" is_empty)
@@ -367,9 +367,9 @@ function(add_qt_android_apk)
   # create the configuration file that will feed androiddeployqt
   # Used variables:
   #   * ANDROID_COMPILER_VERSION
-  #   * ANDROID_NDK_ABI_NAME
   #   * ANDROID_NDK_HOST_SYSTEM_NAME
   #   * ANDROID_TOOLCHAIN_MACHINE_NAME
+  #   * CMAKE_ANDROID_ARCH_ABI
   #   * QT_ANDROID_APP_EXTRA_LIBS
   #   * QT_ANDROID_APP_NAME
   #   * QT_ANDROID_APP_PACKAGE_NAME
@@ -414,7 +414,7 @@ function(add_qt_android_apk)
   # create a custom command that will run the androiddeployqt utility
   # to prepare the Android package
   # make sure that the output directory for the Android package exists
-  set(dst "${CMAKE_CURRENT_BINARY_DIR}/libs/${ANDROID_NDK_ABI_NAME}")
+  set(dst "${CMAKE_CURRENT_BINARY_DIR}/libs/${CMAKE_ANDROID_ARCH_ABI}")
   file(MAKE_DIRECTORY "${dst}")
 
   set(dummy_output_apk "run_android_deploy_qt_${ARG_BASE_TARGET}")
