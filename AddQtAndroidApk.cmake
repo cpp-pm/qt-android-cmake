@@ -161,9 +161,9 @@ function(add_qt_android_apk)
     message(FATAL_ERROR "CMake version 3.7+ required")
   endif()
 
-  string(COMPARE EQUAL "${ANDROID_NATIVE_API_LEVEL}" "" is_empty)
+  string(COMPARE EQUAL "${CMAKE_SYSTEM_VERSION}" "" is_empty)
   if(is_empty)
-    hunter_user_error("ANDROID_NATIVE_API_LEVEL is empty")
+    hunter_user_error("CMAKE_SYSTEM_VERSION is empty")
   endif()
 
   # parse the macro arguments
@@ -296,7 +296,7 @@ function(add_qt_android_apk)
 
     # generate a manifest from the template
     # Use:
-    #   ANDROID_NATIVE_API_LEVEL
+    #   CMAKE_SYSTEM_VERSION
     #   QT_ANDROID_APP_NAME
     #   QT_ANDROID_APP_PACKAGE_NAME
     configure_file(
@@ -407,7 +407,7 @@ function(add_qt_android_apk)
           --output "${CMAKE_CURRENT_BINARY_DIR}"
           --input "${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json"
           --ant "${QT_ANDROID_ANT}"
-          --android-platform "android-${ANDROID_NATIVE_API_LEVEL}"
+          --android-platform "android-${CMAKE_SYSTEM_VERSION}"
           ${INSTALL_OPTIONS}
           ${SIGN_OPTIONS}
       COMMENT "Creating APK (target: ${ARG_TARGET} base: ${ARG_BASE_TARGET})"
@@ -446,7 +446,7 @@ function(add_qt_android_apk)
             --output "${CMAKE_CURRENT_BINARY_DIR}"
             --input "${CMAKE_CURRENT_BINARY_DIR}/qtdeploy.json"
             --ant "${QT_ANDROID_ANT}"
-            --android-platform "android-${ANDROID_NATIVE_API_LEVEL}"
+            --android-platform "android-${CMAKE_SYSTEM_VERSION}"
             --install
             ${SIGN_OPTIONS}
         COMMENT "Launching APK (target: ${ARG_TARGET} base: ${ARG_BASE_TARGET})"
