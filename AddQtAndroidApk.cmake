@@ -157,6 +157,10 @@ function(add_qt_android_apk)
     hunter_user_error("ANDROID is empty")
   endif()
 
+  if(ANDROID AND CMAKE_VERSION VERSION_LESS "3.7")
+    message(FATAL_ERROR "CMake version 3.7+ required")
+  endif()
+
   string(COMPARE EQUAL "${ANDROID_NATIVE_API_LEVEL}" "" is_empty)
   if(is_empty)
     hunter_user_error("ANDROID_NATIVE_API_LEVEL is empty")
