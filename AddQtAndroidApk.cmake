@@ -359,15 +359,15 @@ function(add_qt_android_apk)
     message(FATAL_ERROR "CMAKE_ANDROID_ARCH_ABI is empty")
   endif()
 
-  string(COMPARE EQUAL "${ANDROID_NDK_HOST_SYSTEM_NAME}" "" is_empty)
+  string(COMPARE EQUAL "${CMAKE_ANDROID_NDK_TOOLCHAIN_HOST_TAG}" "" is_empty)
   if(is_empty)
-    message(FATAL_ERROR "ANDROID_NDK_HOST_SYSTEM_NAME is empty")
+    message(FATAL_ERROR "CMAKE_ANDROID_NDK_TOOLCHAIN_HOST_TAG is empty")
   endif()
 
   # create the configuration file that will feed androiddeployqt
   # Used variables:
   #   * ANDROID_COMPILER_VERSION
-  #   * ANDROID_NDK_HOST_SYSTEM_NAME
+  #   * CMAKE_ANDROID_NDK_TOOLCHAIN_HOST_TAG
   #   * CMAKE_CXX_ANDROID_TOOLCHAIN_MACHINE
   #   * CMAKE_ANDROID_ARCH_ABI
   #   * QT_ANDROID_APP_EXTRA_LIBS
