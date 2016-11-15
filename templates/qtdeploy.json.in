@@ -5,7 +5,7 @@
  "ndk": "@QT_ANDROID_NDK_ROOT@",
  "toolchain-prefix": "@CMAKE_CXX_ANDROID_TOOLCHAIN_MACHINE@",
  "tool-prefix": "@CMAKE_CXX_ANDROID_TOOLCHAIN_MACHINE@",
- "toolchain-version": "@ANDROID_COMPILER_VERSION@",
+ "toolchain-version": "@CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION@",
  "ndk-host": "@CMAKE_ANDROID_NDK_TOOLCHAIN_HOST_TAG@",
  "target-architecture": "@CMAKE_ANDROID_ARCH_ABI@",
  "application-binary": "@QT_ANDROID_APP_PATH@",

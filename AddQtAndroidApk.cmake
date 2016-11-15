@@ -349,9 +349,9 @@ function(add_qt_android_apk)
     message(FATAL_ERROR "CMAKE_CXX_ANDROID_TOOLCHAIN_MACHINE is empty")
   endif()
 
-  string(COMPARE EQUAL "${ANDROID_COMPILER_VERSION}" "" is_empty)
+  string(COMPARE EQUAL "${CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION}" "" is_empty)
   if(is_empty)
-    message(FATAL_ERROR "ANDROID_COMPILER_VERSION is empty")
+    message(FATAL_ERROR "CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION is empty")
   endif()
 
   string(COMPARE EQUAL "${CMAKE_ANDROID_ARCH_ABI}" "" is_empty)
@@ -366,7 +366,7 @@ function(add_qt_android_apk)
 
   # create the configuration file that will feed androiddeployqt
   # Used variables:
-  #   * ANDROID_COMPILER_VERSION
+  #   * CMAKE_ANDROID_NDK_TOOLCHAIN_VERSION
   #   * CMAKE_ANDROID_NDK_TOOLCHAIN_HOST_TAG
   #   * CMAKE_CXX_ANDROID_TOOLCHAIN_MACHINE
   #   * CMAKE_ANDROID_ARCH_ABI
