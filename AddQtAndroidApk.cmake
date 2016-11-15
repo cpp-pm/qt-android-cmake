@@ -344,9 +344,9 @@ function(add_qt_android_apk)
     set(QT_QML_ROOT "\"qml-root-path\": \"${ARG_QML_ROOT}\",")
   endif()
 
-  string(COMPARE EQUAL "${ANDROID_TOOLCHAIN_MACHINE_NAME}" "" is_empty)
+  string(COMPARE EQUAL "${CMAKE_CXX_ANDROID_TOOLCHAIN_MACHINE}" "" is_empty)
   if(is_empty)
-    message(FATAL_ERROR "ANDROID_TOOLCHAIN_MACHINE_NAME is empty")
+    message(FATAL_ERROR "CMAKE_CXX_ANDROID_TOOLCHAIN_MACHINE is empty")
   endif()
 
   string(COMPARE EQUAL "${ANDROID_COMPILER_VERSION}" "" is_empty)
@@ -368,7 +368,7 @@ function(add_qt_android_apk)
   # Used variables:
   #   * ANDROID_COMPILER_VERSION
   #   * ANDROID_NDK_HOST_SYSTEM_NAME
-  #   * ANDROID_TOOLCHAIN_MACHINE_NAME
+  #   * CMAKE_CXX_ANDROID_TOOLCHAIN_MACHINE
   #   * CMAKE_ANDROID_ARCH_ABI
   #   * QT_ANDROID_APP_EXTRA_LIBS
   #   * QT_ANDROID_APP_NAME
