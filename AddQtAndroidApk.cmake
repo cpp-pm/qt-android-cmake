@@ -213,6 +213,11 @@ function(add_qt_android_apk)
     hunter_user_error("Target already exists: ${ARG_TARGET}")
   endif()
 
+  string(COMPARE EQUAL "${CMAKE_BUILD_TYPE}" "" is_empty)
+  if(is_empty)
+    hunter_user_error("CMAKE_BUILD_TYPE is empty")
+  endif()
+
   string(COMPARE EQUAL "${CMAKE_BUILD_TYPE}" "Debug" is_debug)
 
   # check the configuration
@@ -223,11 +228,11 @@ function(add_qt_android_apk)
   endif()
 
   # extract the full path of the source target binary
-  if(is_debug)
-    get_property(
-        QT_ANDROID_APP_PATH TARGET "${ARG_BASE_TARGET}" PROPERTY DEBUG_LOCATION
-    )
-  else()
+  string(TOUPPER "${CMAKE_BUILD_TYPE}" build_type_upper)
+  get_property(
+      QT_ANDROID_APP_PATH TARGET "${ARG_BASE_TARGET}" PROPERTY "${build_type_upper}_LOCATION"
+  )
+  if(NOT QT_ANDROID_APP_PATH)
     get_property(
         QT_ANDROID_APP_PATH TARGET "${ARG_BASE_TARGET}" PROPERTY LOCATION
     )
@@ -315,9 +320,8 @@ function(add_qt_android_apk)
   foreach(LIB ${ARG_DEPENDS})
     if(TARGET "${LIB}")
       # item is a CMake target, extract the library path
-      if(is_debug)
-        get_property(LIB_PATH TARGET "${LIB}" PROPERTY DEBUG_LOCATION)
-      else()
+      get_property(LIB_PATH TARGET "${LIB}" PROPERTY "${build_type_upper}_LOCATION")
+      if(NOT LIB_PATH)
         get_property(LIB_PATH TARGET "${LIB}" PROPERTY LOCATION)
       endif()
       set(LIB "${LIB_PATH}")
