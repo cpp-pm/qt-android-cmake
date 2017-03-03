@@ -219,6 +219,7 @@ function(add_qt_android_apk)
   endif()
 
   string(COMPARE EQUAL "${CMAKE_BUILD_TYPE}" "Debug" is_debug)
+  string(TOUPPER "${CMAKE_BUILD_TYPE}" build_type_upper)
 
   # check the configuration
   if(is_debug)
@@ -227,8 +228,14 @@ function(add_qt_android_apk)
     set(ANT_CONFIG release)
   endif()
 
+  # Remove postfix (before reading LOCATION!)
+  set_target_properties(
+      "${ARG_BASE_TARGET}"
+      PROPERTIES
+      "${build_type_upper}_POSTFIX" ""
+  )
+
   # extract the full path of the source target binary
-  string(TOUPPER "${CMAKE_BUILD_TYPE}" build_type_upper)
   get_property(
       QT_ANDROID_APP_PATH TARGET "${ARG_BASE_TARGET}" PROPERTY "${build_type_upper}_LOCATION"
   )
@@ -237,13 +244,6 @@ function(add_qt_android_apk)
         QT_ANDROID_APP_PATH TARGET "${ARG_BASE_TARGET}" PROPERTY LOCATION
     )
   endif()
-
-  # Remove postfix
-  set_target_properties(
-      "${ARG_BASE_TARGET}"
-      PROPERTIES
-      "${build_type_upper}_POSTFIX" ""
-  )
 
   # define the application name
   string(COMPARE NOTEQUAL "${ARG_NAME}" "" has_name)
