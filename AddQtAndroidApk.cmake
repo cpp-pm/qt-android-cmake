@@ -238,6 +238,13 @@ function(add_qt_android_apk)
     )
   endif()
 
+  # Remove postfix
+  set_target_properties(
+      "${ARG_BASE_TARGET}"
+      PROPERTIES
+      "${build_type_upper}_POSTFIX" ""
+  )
+
   # define the application name
   string(COMPARE NOTEQUAL "${ARG_NAME}" "" has_name)
   if(has_name)
