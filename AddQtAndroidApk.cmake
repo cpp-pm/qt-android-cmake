@@ -1,4 +1,4 @@
-# Copyright (c) 2015, Ruslan Baratov
+# Copyright (c) 2015-2017, Ruslan Baratov
 # All rights reserved.
 
 # Hunterized version of https://github.com/LaurentGomila/qt-android-cmake
@@ -29,7 +29,9 @@ if(NOT HUNTER_ENABLED)
   endfunction()
 endif()
 
-if(XCODE OR MSVC_IDE)
+# http://cgold.readthedocs.io/en/latest/tutorials/build-types.html#detect-multi-single
+string(COMPARE EQUAL "${CMAKE_CFG_INTDIR}" "." _is_single)
+if(NOT _is_single)
   hunter_user_error(
       "Only for single-configuration generators (like 'Unix Makefiles')"
   )
